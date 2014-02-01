@@ -18,7 +18,7 @@ public class PlayerControl : MonoBehaviour
     public float
         runSpeed = 10f;     // The fastest the player can travel in the x axis.
     public float maxSpeed;
-    public float jumpForce = 3 * 200f;          // Amount of force added when the player jumps.
+    public float jumpForce = 1500f;          // Amount of force added when the player jumps.
 
     private float gravScale;
     private Transform groundCheck;          // A position marking where to check if the player is grounded.
@@ -63,7 +63,7 @@ public class PlayerControl : MonoBehaviour
 
     void FixedUpdate ()
     {
-        //If the player is stuck to the wall and falling
+        //If the player is touching the wall and falling
         if (walled && falling) {
             //Reduce the gravity by 200%
             rigidbody2D.gravityScale = gravScale / 4;
@@ -79,11 +79,12 @@ public class PlayerControl : MonoBehaviour
 
         //If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
         if (h * rigidbody2D.velocity.x < maxSpeed && (Mathf.Abs (rigidbody2D.velocity.x) < maxSpeed)) {
-            // ... add a force to the player.
+            // ... and is grounded
             if (grounded) {
                 rigidbody2D.AddForce (Vector2.right * h * moveForce);
+            // ... and is in the air
             } else { 
-                rigidbody2D.AddForce ((Vector2.right * h * moveForce) / 5);
+                rigidbody2D.AddForce ((Vector2.right * h * moveForce) / 3);
             }
         }
 
@@ -113,10 +114,8 @@ public class PlayerControl : MonoBehaviour
         } else {
             if (h > 0 && rigidbody2D.velocity.x > 1 && !facingRight) {
                 Flip ();
-                Debug.Log("flip flap "+Mathf.Round(rigidbody2D.velocity.x));
                 // Otherwise if the input is moving the player left and the player is facing right...
             } else if (h < 0 && rigidbody2D.velocity.x < -1 && facingRight) {
-                Debug.Log("flip flap "+Mathf.Round(rigidbody2D.velocity.x));
                    // ... flip the player.
                 Flip ();
             }
