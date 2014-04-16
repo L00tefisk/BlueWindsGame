@@ -18,8 +18,10 @@ public class PlayerControl : MonoBehaviour
     public float
         runSpeed = 10f;     // The fastest the player can travel in the x axis.
     public float maxSpeed;
-    public float jumpForce = 1500f;          // Amount of force added when the player jumps.
-
+    public float jumpForce = 1500f;          // Amount of force added when the player jumps. 
+    private float currentForce;
+    private float maxHoldTime = 0;
+    private float holdTime;
     private float gravScale;
     private Transform groundCheck;          // A position marking where to check if the player is grounded.
     private Transform wallCheck;
@@ -44,25 +46,61 @@ public class PlayerControl : MonoBehaviour
         walled = Physics2D.Linecast (transform.position, wallCheck.position, 1 << LayerMask.NameToLayer ("Walls")); 
 
         anim.SetBool ("Walled", walled);
-
         anim.SetBool ("Grounded", grounded);
         anim.SetBool ("Falling", falling);
 
         // If the jump button is pressed and the player is grounded then the player should jump.
-        if (Input.GetButtonDown ("Jump") && (grounded || walled)) {
+        /*if (Input.GetButtonDown ("Jump") && (grounded || walled)) {
+            holdTime = 0;
             jump = true;
             falling = false;
-        }
+        }*/
         
         if (Input.GetButton ("Sprint") && grounded) {
             maxSpeed = runSpeed * 1.5f;
         } else if (grounded) {
             maxSpeed = runSpeed;
         }
+        
+        /*if (Input.GetButton ("Jump") && jump) {
+            if (Input.GetButtonDown ("Jump") && grounded) {
+                rigidbody2D.AddForce (new Vector2 (0f, jumpForce / 1.3f));
+            }
+            maxHoldTime = rigidbody2D.velocity.y;
+            holdTime += Time.deltaTime;
+            if (holdTime > 0.15) {
+                Debug.Log ("Hold: "+holdTime+" Vel: "+rigidbody2D.velocity.y);
+                //rigidbody2D.AddForce (new Vector2 (0f, jumpForce / 5f));
+                rigidbody2D.velocity = new Vector2 (rigidbody2D.velocity.x, maxHoldTime+5);
+                jump = false;
+            }
+        } else {
+            holdTime = 0;
+        }*/
+        if (Input.GetButton("Jump") && !jump) {
+            jump = true;
+            holdTime = 0;
+            Debug.Log("START jump: "+jump+", hold: "+holdTime);
+        } else if  (!Input.GetButton("Jump")) {
+            jump = false;
+        }
     }
-
     void FixedUpdate ()
     {
+        
+        if (jump && holdTime < 0.16)
+        {
+            holdTime += Time.deltaTime;
+            Debug.Log("HOLD jump: "+jump+", hold: "+holdTime);
+            rigidbody2D.AddForce (new Vector2 (0f, jumpForce / 7f));
+        } else if (!jump && holdTime > 0        && holdTime < 0.08) 
+        {
+            Debug.Log("RELEASED jump: "+jump+", hold: "+holdTime);
+            holdTime += Time.deltaTime;
+            rigidbody2D.AddForce (new Vector2 (0f, jumpForce / 4f));
+        }
+        
+        
         //If the player is touching the wall and falling
         if (walled && falling) {
             //Reduce the gravity by 200%
@@ -82,7 +120,7 @@ public class PlayerControl : MonoBehaviour
             // ... and is grounded
             if (grounded) {
                 rigidbody2D.AddForce (Vector2.right * h * moveForce);
-            // ... and is in the air
+                // ... and is in the air
             } else { 
                 rigidbody2D.AddForce ((Vector2.right * h * moveForce) / 3);
             }
@@ -116,24 +154,21 @@ public class PlayerControl : MonoBehaviour
                 Flip ();
                 // Otherwise if the input is moving the player left and the player is facing right...
             } else if (h < 0 && rigidbody2D.velocity.x < -1 && facingRight) {
-                   // ... flip the player.
+                // ... flip the player.
                 Flip ();
             }
         }
-
         // If the player should jump...
         if (jump) {
             //While on the ground:
             if (grounded) {
                 // Set the Jump animator trigger parameter.
                 anim.SetTrigger ("Jump");
-
-                // Add a vertical force to the player.
-                rigidbody2D.AddForce (new Vector2 (0f, jumpForce));
-
+                
+               
                 // Make sure the player can't jump again until the jump conditions from Update are satisfied.
-                jump = false;
-            //While in the air and attached to a wall
+                
+                //While in the air and attached to a wall
             } else if (walled) {
                 //Disable sprinting in air
                 maxSpeed = runSpeed;
