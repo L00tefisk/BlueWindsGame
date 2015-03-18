@@ -1,8 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\..\Unity\PlaneGame\Assets\PlayerControl.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\..\Unity\Vigilante\Assets\PlayerControl.cs">
     <Files>
-      <File FileName="..\..\Unity\PlaneGame\Assets\PlayerControl.cs" Line="1" Column="1" />
+      <File FileName="..\..\Unity\Vigilante\Assets\PlayerControl.cs" Line="46" Column="20" />
+      <File FileName="..\..\Unity\Vigilante\Assets\CameraProperties.cs" Line="19" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

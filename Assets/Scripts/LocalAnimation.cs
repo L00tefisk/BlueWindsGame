@@ -28,7 +28,7 @@ public class LocalAnimation : MonoBehaviour
 
     {
 
-        if (!animation.isPlaying && !wasPlaying)
+        if (!GetComponent<Animation>().isPlaying && !wasPlaying)
 
             return;
 
@@ -38,7 +38,7 @@ public class LocalAnimation : MonoBehaviour
 
  
 
-        wasPlaying = animation.isPlaying;
+        wasPlaying = GetComponent<Animation>().isPlaying;
 
     }
 

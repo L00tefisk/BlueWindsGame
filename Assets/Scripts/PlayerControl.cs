@@ -33,7 +33,7 @@ public class PlayerControl : MonoBehaviour
     void Awake ()
     {
         // Setting up references.
-        gravScale = rigidbody2D.gravityScale;
+        gravScale = GetComponent<Rigidbody2D>().gravityScale;
         groundCheck = transform.Find ("groundCheck");
         wallCheck = transform.Find ("wallCheck");
         anim = GetComponent<Animator> ();
@@ -92,22 +92,22 @@ public class PlayerControl : MonoBehaviour
         {
             holdTime += Time.deltaTime;
             Debug.Log("HOLD jump: "+jump+", hold: "+holdTime);
-            rigidbody2D.AddForce (new Vector2 (0f, jumpForce / 7f));
+            GetComponent<Rigidbody2D>().AddForce (new Vector2 (0f, jumpForce / 7f));
         } else if (!jump && holdTime > 0        && holdTime < 0.08) 
         {
             Debug.Log("RELEASED jump: "+jump+", hold: "+holdTime);
             holdTime += Time.deltaTime;
-            rigidbody2D.AddForce (new Vector2 (0f, jumpForce / 4f));
+            GetComponent<Rigidbody2D>().AddForce (new Vector2 (0f, jumpForce / 4f));
         }
         
         
         //If the player is touching the wall and falling
         if (walled && falling) {
             //Reduce the gravity by 200%
-            rigidbody2D.gravityScale = gravScale / 4;
+            GetComponent<Rigidbody2D>().gravityScale = gravScale / 4;
         } else {
             //Return it to normal
-            rigidbody2D.gravityScale = gravScale;
+            GetComponent<Rigidbody2D>().gravityScale = gravScale;
         }
         // Cache the horizontal input.
         float h = Input.GetAxis ("Horizontal");
@@ -116,27 +116,27 @@ public class PlayerControl : MonoBehaviour
         anim.SetFloat ("Speed", Mathf.Abs (h * 2));
 
         //If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-        if (h * rigidbody2D.velocity.x < maxSpeed && (Mathf.Abs (rigidbody2D.velocity.x) < maxSpeed)) {
+        if (h * GetComponent<Rigidbody2D>().velocity.x < maxSpeed && (Mathf.Abs (GetComponent<Rigidbody2D>().velocity.x) < maxSpeed)) {
             // ... and is grounded
             if (grounded) {
-                rigidbody2D.AddForce (Vector2.right * h * moveForce);
+                GetComponent<Rigidbody2D>().AddForce (Vector2.right * h * moveForce);
                 // ... and is in the air
             } else { 
-                rigidbody2D.AddForce ((Vector2.right * h * moveForce) / 3);
+                GetComponent<Rigidbody2D>().AddForce ((Vector2.right * h * moveForce) / 3);
             }
         }
 
         // If the player's horizontal velocity is greater than the maxSpeed...
-        if (Mathf.Abs (rigidbody2D.velocity.x) > maxSpeed) {
+        if (Mathf.Abs (GetComponent<Rigidbody2D>().velocity.x) > maxSpeed) {
             // ... set the player's velocity to the maxSpeed in the x axis.
-            rigidbody2D.velocity = new Vector2 (Mathf.Sign (rigidbody2D.velocity.x) * maxSpeed, rigidbody2D.velocity.y);
+            GetComponent<Rigidbody2D>().velocity = new Vector2 (Mathf.Sign (GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
         }
 
         //TODO 
         else if (h == 0 && grounded) {
-            rigidbody2D.velocity = new Vector2 (rigidbody2D.velocity.x * 0.90f, rigidbody2D.velocity.y);
+            GetComponent<Rigidbody2D>().velocity = new Vector2 (GetComponent<Rigidbody2D>().velocity.x * 0.90f, GetComponent<Rigidbody2D>().velocity.y);
         } else if (h == 0) {
-            rigidbody2D.velocity = new Vector2 (rigidbody2D.velocity.x * 0.985f, rigidbody2D.velocity.y);
+            GetComponent<Rigidbody2D>().velocity = new Vector2 (GetComponent<Rigidbody2D>().velocity.x * 0.985f, GetComponent<Rigidbody2D>().velocity.y);
         }
         
         if (grounded) {
@@ -150,10 +150,10 @@ public class PlayerControl : MonoBehaviour
                 Flip ();
             }
         } else {
-            if (h > 0 && rigidbody2D.velocity.x > 1 && !facingRight) {
+            if (h > 0 && GetComponent<Rigidbody2D>().velocity.x > 1 && !facingRight) {
                 Flip ();
                 // Otherwise if the input is moving the player left and the player is facing right...
-            } else if (h < 0 && rigidbody2D.velocity.x < -1 && facingRight) {
+            } else if (h < 0 && GetComponent<Rigidbody2D>().velocity.x < -1 && facingRight) {
                 // ... flip the player.
                 Flip ();
             }
@@ -173,18 +173,18 @@ public class PlayerControl : MonoBehaviour
                 //Disable sprinting in air
                 maxSpeed = runSpeed;
                 //Reset the speed before the jump
-                rigidbody2D.velocity = new Vector2 (0, 0);
+                GetComponent<Rigidbody2D>().velocity = new Vector2 (0, 0);
                 anim.SetTrigger ("Jump");
                 if (facingRight) {
-                    rigidbody2D.AddForce (new Vector2 (-jumpForce * 2.5f, jumpForce / 1.2f));
+                    GetComponent<Rigidbody2D>().AddForce (new Vector2 (-jumpForce * 2.5f, jumpForce / 1.2f));
                 } else {
-                    rigidbody2D.AddForce (new Vector2 (jumpForce * 2.5f, jumpForce / 1.2f));
+                    GetComponent<Rigidbody2D>().AddForce (new Vector2 (jumpForce * 2.5f, jumpForce / 1.2f));
                 }
                 Flip ();
                 jump = false;
             }
 
-        } else if (rigidbody2D.velocity.y < -1) {
+        } else if (GetComponent<Rigidbody2D>().velocity.y < -1) {
             falling = true;
         } else if (grounded) {
             falling = false;

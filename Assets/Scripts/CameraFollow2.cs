@@ -35,7 +35,7 @@ public class CameraFollow2 : MonoBehaviour
 		//Debug.Log("X: "+player.position.x+", Y: "+player.position.x);
 		//if (CheckXMargin()) 
 		//Debug.Log("Vel: "+Mathf.RoundToInt(player.rigidbody2D.velocity.x) + ", FR = "+facingRight + ", CO = "+Mathf.Abs(player.rigidbody2D.velocity.x/2) * Time.deltaTime);
-			if((player.rigidbody2D.velocity.x > 0 && !facingRight) || (player.rigidbody2D.velocity.x < 0 && facingRight))  {
+			if((player.GetComponent<Rigidbody2D>().velocity.x > 0 && !facingRight) || (player.GetComponent<Rigidbody2D>().velocity.x < 0 && facingRight))  {
 			facingRight = !facingRight;
 			cameraOffset *= -1; 
 			}
@@ -44,14 +44,14 @@ public class CameraFollow2 : MonoBehaviour
 			transform.position.x, 
 			cameraOffset+player.position.x
 			//+Mathf.Clamp(player.rigidbody2D.velocity.x*(speedFactor*0.1f), -6f, 6f)
-			,(Mathf.Abs(player.rigidbody2D.velocity.x/4)+1.5f) * Time.deltaTime
+			,(Mathf.Abs(player.GetComponent<Rigidbody2D>().velocity.x/4)+1.5f) * Time.deltaTime
 			);
 
 
 			// ... the target y coordinate should be a Lerp between the camera's current y position and the player's current y position.
 		targetY = Mathf.Lerp(
 			transform.position.y, 
-			2f + player.position.y+Mathf.Clamp(player.rigidbody2D.velocity.y*(ySmooth*0.05f),-10, 0), 
+			2f + player.position.y+Mathf.Clamp(player.GetComponent<Rigidbody2D>().velocity.y*(ySmooth*0.05f),-10, 0), 
 			ySmooth * Time.deltaTime
 			);
 
